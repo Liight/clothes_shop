@@ -1,8 +1,10 @@
 // flutter
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 // custom
 import './screens/products_overview_screen.dart';
 import './screens/product_detail_screen.dart';
+import './providers/products.dart';
 
 // run app
 void main() => runApp(MyApp());
@@ -10,7 +12,9 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return ChangeNotifierProvider(
+      builder: (ctx) => Products(),
+          child: MaterialApp(
         title: 'MyShop',
         theme: ThemeData(
           primarySwatch: Colors.purple,
@@ -20,6 +24,8 @@ class MyApp extends StatelessWidget {
         home: ProductsOverviewScreen(),
         routes: {
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
-        });
+        },
+      ),
+    );
   }
 }
