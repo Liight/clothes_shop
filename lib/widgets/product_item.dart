@@ -1,7 +1,9 @@
 // flutter
 import 'package:flutter/material.dart';
+
 // custom
 import '../screens/product_detail_screen.dart';
+
 
 class ProductItem extends StatelessWidget {
   final String id;
@@ -16,6 +18,7 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
