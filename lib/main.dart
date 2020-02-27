@@ -1,5 +1,8 @@
+// flutter
 import 'package:flutter/material.dart';
-
+// custom
+import './screens/products_overview_screen.dart';
+// run app
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -10,21 +13,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(),
+      home: ProductsOverviewScreen(),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('MyShop'),
-      ),
-      body: Center(
-        child: Text('Let\'s build a shop!'),
-      ),
-    );
-  }
-}
