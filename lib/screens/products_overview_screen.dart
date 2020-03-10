@@ -1,9 +1,9 @@
 // flutter
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+// import 'package:provider/provider.dart';
 // custom
 import '../widgets/products_grid.dart';
-import '../providers/products.dart';
+// import '../providers/products.dart';
 
 enum FilterOptions {
   Favourites,
@@ -16,7 +16,7 @@ class ProductsOverviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final productsContainer = Provider.of<Products>(context);
+    // final productsContainer = Provider.of<Products>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('My Shop'),
@@ -24,9 +24,9 @@ class ProductsOverviewScreen extends StatelessWidget {
           PopupMenuButton(
             onSelected: (FilterOptions selectedValue) {
               if(selectedValue == FilterOptions.Favourites){
-                productsContainer.showFavouritesOnly();
+                // productsContainer.showFavouritesOnly();
               } else {
-                productsContainer.showAll();
+                // productsContainer.showAll();
               }
 
             },
