@@ -38,12 +38,13 @@ class Products with ChangeNotifier {
     ),
   ];
 
-  // var _showFavouritesOnly = false;
+
+  List<Product> get favouriteItems {
+    return _items.where((prodItem) => prodItem.isFavourite).toList();
+  }
 
   List<Product> get items {
-    // if(_showFavouritesOnly){
-    //   return _items.where((prodItem) => prodItem.isFavourite).toList();
-    // }
+
     return [..._items];
   }
 
@@ -51,15 +52,6 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  // void showFavouritesOnly(){
-  //   _showFavouritesOnly = true;
-  //   notifyListeners();
-  // }
-
-  // void showAll (){
-  //   _showFavouritesOnly = false;
-  //   notifyListeners();
-  // }
 
   void addProduct(Product newProduct) {
     // _items.add(newProduct);

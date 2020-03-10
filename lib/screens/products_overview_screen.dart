@@ -1,34 +1,38 @@
 // flutter
 import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
+
 // custom
 import '../widgets/products_grid.dart';
-// import '../providers/products.dart';
 
 enum FilterOptions {
   Favourites,
   All,
 }
 
-class ProductsOverviewScreen extends StatelessWidget {
-  
+class ProductsOverviewScreen extends StatefulWidget {
   ProductsOverviewScreen({Key key}) : super(key: key);
 
   @override
+  _ProductsOverviewScreenState createState() => _ProductsOverviewScreenState();
+}
+
+class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
+  bool _showOnlyFavourites = false;
+  @override
   Widget build(BuildContext context) {
-    // final productsContainer = Provider.of<Products>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('My Shop'),
         actions: <Widget>[
           PopupMenuButton(
             onSelected: (FilterOptions selectedValue) {
-              if(selectedValue == FilterOptions.Favourites){
-                // productsContainer.showFavouritesOnly();
-              } else {
-                // productsContainer.showAll();
-              }
-
+              setState(() {
+                if (selectedValue == FilterOptions.Favourites) {
+                  _showOnlyFavourites = true;
+                } else {
+                  _showOnlyFavourites = false;
+                }
+              });
             },
             icon: Icon(Icons.more_vert),
             itemBuilder: (_) => [
@@ -44,7 +48,7 @@ class ProductsOverviewScreen extends StatelessWidget {
           )
         ],
       ),
-      body: ProductsGrid(),
+      body: ProductsGrid(_showOnlyFavourites),
     );
   }
 }
