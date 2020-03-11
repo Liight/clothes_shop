@@ -30,9 +30,7 @@ class CartScreen extends StatelessWidget {
                       fontSize: 20,
                     ),
                   ),
-                  SizedBox(
-                    width: 10,
-                  ),
+                  Spacer(),
                   Chip(
                     label: Text(
                       '\$${cart.totalAmount}',
@@ -42,7 +40,12 @@ class CartScreen extends StatelessWidget {
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  
+                  FlatButton(
+                    child: Text('ORDER NOW'),
+                    textColor: Theme.of(context).primaryColor,
+                    onPressed: (){},
+                    
+                  ),
                 ],
               ),
             ),
