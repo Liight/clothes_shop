@@ -7,7 +7,16 @@ class EditProductScreen extends StatefulWidget {
 }
 
 class _EditProductScreenState extends State<EditProductScreen> {
-final _priceFocusNode = FocusNode();
+// Set focus nodes for form routing behaviour
+final _priceFocusNode = FocusNode(); // 
+final _descriptionFocusNode = FocusNode();
+// Handle garbage collection for focus nodes
+  @override
+  void dispose() {
+    _priceFocusNode.dispose();
+    _descriptionFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +41,16 @@ final _priceFocusNode = FocusNode();
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.number,
                 focusNode: _priceFocusNode, // Focus 1 address
+                onFieldSubmitted: (value) {
+                  FocusScope.of(context).requestFocus(_descriptionFocusNode); // Refocus request 1
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Description'),
+                maxLines: 3,
+                textInputAction: TextInputAction.next, // Icon
+                keyboardType: TextInputType.multiline,
+                focusNode: _descriptionFocusNode, // Focus 1 address
               ),
             ],
           ),
