@@ -22,16 +22,17 @@ class Cart with ChangeNotifier {
   }
 
   int get itemCount {
-    return _items.length == null ? 0 : _items.length; // returns the unique product count
+    return _items.length == null
+        ? 0
+        : _items.length; // returns the unique product count
     // should return sum of all quantities
   }
 
   // placeholder simple maths for the total amount in the cart
   double get totalAmount {
     double total = 0.0;
-    _items.forEach((key, cartItem)=>{
-      total += cartItem.price * cartItem.quantity
-    });
+    _items.forEach(
+        (key, cartItem) => {total += cartItem.price * cartItem.quantity});
     return total;
   }
 
@@ -64,14 +65,35 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
-  void removeItem(String productId){
+  void removeItem(String productId) {
     _items.remove(productId);
     notifyListeners();
   }
 
-  void clear(){
-    _items = {};
+  void removeSingleItem(String productId) {
+    // Removes a signle item from the cart
+    // If only 1 item of that type to be removed, removes item entry to reflect 0 quantity
+    if (!_items.containsKey(productId)) {
+      return;
+    }
+    if (_items[productId].quantity > 1) {
+      _items.update(
+        productId,
+        (existingCartItem) => CartItem(
+          id: existingCartItem.id,
+          title: existingCartItem.title,
+          price: existingCartItem.price,
+          quantity: existingCartItem.quantity - 1,
+        ),
+      );
+    } else {
+      _items.remove(productId);
+    }
     notifyListeners();
   }
 
+  void clear() {
+    _items = {};
+    notifyListeners();
+  }
 }
