@@ -15,14 +15,14 @@ class CartItem {
 }
 
 class Cart with ChangeNotifier {
-  Map<String, CartItem> _items;
+  Map<String, CartItem> _items = {};
 
   Map<String, CartItem> get items {
     return {..._items};
   }
 
   int get itemCount {
-    return _items == null ? 0 : _items.length; // returns the unique product count
+    return _items.length; // returns the unique product count
     // should return sum of all quantities
   }
 
