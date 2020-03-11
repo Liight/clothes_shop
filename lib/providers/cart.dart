@@ -22,7 +22,7 @@ class Cart with ChangeNotifier {
   }
 
   int get itemCount {
-    return _items.length; // returns the unique product count
+    return _items.length == null ? 0 : _items.length; // returns the unique product count
     // should return sum of all quantities
   }
 

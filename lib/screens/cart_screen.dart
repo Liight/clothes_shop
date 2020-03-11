@@ -3,7 +3,8 @@ import 'package:provider/provider.dart';
 // flutter
 import 'package:flutter/material.dart';
 // custom
-import '../providers/cart.dart';
+import '../providers/cart.dart' show Cart; // only imports Cart from this file
+import '../widgets/cart_item.dart';
 
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart';
@@ -26,9 +27,7 @@ class CartScreen extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Total',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
+                    style: TextStyle(fontSize: 20),
                   ),
                   Spacer(),
                   Chip(
@@ -43,10 +42,24 @@ class CartScreen extends StatelessWidget {
                   FlatButton(
                     child: Text('ORDER NOW'),
                     textColor: Theme.of(context).primaryColor,
-                    onPressed: (){},
-                    
+                    onPressed: () {},
+                  ),
+                  SizedBox(
+                    height: 10,
                   ),
                 ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: cart.items.length,
+              itemBuilder: (ctx, i) => CartItem(
+                cart.items.values.toList()[i].id,
+                cart.items.values.toList()[i].price,
+                cart.items.values.toList()[i].quantity,
+                cart.items.values.toList()[i].title,
               ),
             ),
           ),
