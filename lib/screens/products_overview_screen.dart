@@ -1,8 +1,12 @@
 // flutter
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 // custom
 import '../widgets/products_grid.dart';
+import '../widgets/badge.dart';
+import '../providers/cart.dart';
 
 enum FilterOptions {
   Favourites,
@@ -45,7 +49,20 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                 value: FilterOptions.All,
               ),
             ],
-          )
+          ),
+          // Consume cart and forward iconbutton from consumer child to Badges child
+          // This ensures the IconButton wont rebuild when the cart changes
+          Consumer<Cart>(
+            builder: (_, cart, ch) => Badge(
+              child: ch,
+              value: cart.itemCount.toString(),
+            ),
+            child: IconButton(
+              icon: Icon(
+                Icons.shopping_cart,
+              ),
+            ),
+          ),
         ],
       ),
       body: ProductsGrid(_showOnlyFavourites),
