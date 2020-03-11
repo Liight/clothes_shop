@@ -21,6 +21,11 @@ class Cart with ChangeNotifier {
     return {..._items};
   }
 
+  int get itemCount {
+    return _items == null ? 0 : _items.length; // returns the unique product count
+    // should return sum of all quantities
+  }
+
   void addItem(
     String productId,
     double price,
@@ -47,5 +52,6 @@ class Cart with ChangeNotifier {
         ),
       );
     }
+    notifyListeners();
   }
 }
