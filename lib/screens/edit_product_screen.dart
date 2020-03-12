@@ -1,4 +1,7 @@
+// flutter
 import 'package:flutter/material.dart';
+// custom
+import '../providers/product.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = './edit-product';
@@ -12,7 +15,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _descriptionFocusNode = FocusNode();
   final _imageUrlFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
-
+  final _form = GlobalKey<
+      FormState>(); // Interact with the state behind the form widget in this widget
+  var _editedProduct =
+      Product(id: null, title: '', price: 0, description: '', imageUrl: '');
   // Create and attach a custom listener for the imageUrlFocus Node
   @override
   void initState() {
@@ -32,11 +38,20 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   // Update the ImageUrl Image
-  void _updateImageUrl(){
-    if(!_imageUrlFocusNode.hasFocus){
-    // Rebuild the screen widget knowing that a state update has occured via a refocus
-      setState(() {}); 
+  void _updateImageUrl() {
+    if (!_imageUrlFocusNode.hasFocus) {
+      // Rebuild the screen widget knowing that a state update has occured via a refocus
+      setState(() {});
     }
+  }
+
+  void _saveForm() {
+    _form.currentState.save();
+    print(_editedProduct.id);
+    print(_editedProduct.title);
+    print(_editedProduct.description);
+    print(_editedProduct.price);
+    print(_editedProduct.imageUrl);
   }
 
   @override
@@ -44,11 +59,20 @@ class _EditProductScreenState extends State<EditProductScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Product'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.save),
+            onPressed: _saveForm,
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
+          key: _form, // _form = GlobalKey<FormState>()
           child: ListView(
+            shrinkWrap:
+                true, // important to add this for a fized size dimension to child widgets relying on this
             children: <Widget>[
               TextFormField(
                 decoration: InputDecoration(labelText: 'Title'),
@@ -56,6 +80,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 onFieldSubmitted: (value) {
                   FocusScope.of(context)
                       .requestFocus(_priceFocusNode); // Refocus request 1
+                },
+                onSaved: (value) {
+                  _editedProduct = Product(
+                    id: null,
+                    title: value,
+                    price: _editedProduct.price,
+                    description: _editedProduct.description,
+                    imageUrl: _editedProduct.imageUrl,
+                  );
                 },
               ),
               TextFormField(
@@ -67,6 +100,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   FocusScope.of(context)
                       .requestFocus(_descriptionFocusNode); // Refocus request 1
                 },
+                onSaved: (value) {
+                  _editedProduct = Product(
+                    id: null,
+                    title: _editedProduct.title,
+                    price: double.parse(value),
+                    description: _editedProduct.description,
+                    imageUrl: _editedProduct.imageUrl,
+                  );
+                },
               ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Description'),
@@ -74,6 +116,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 textInputAction: TextInputAction.next, // Icon
                 keyboardType: TextInputType.multiline,
                 focusNode: _descriptionFocusNode, // Focus 1 address
+                onSaved: (value) {
+                  _editedProduct = Product(
+                    id: null,
+                    title: _editedProduct.title,
+                    price: _editedProduct.price,
+                    description: value,
+                    imageUrl: _editedProduct.imageUrl,
+                  );
+                },
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -89,14 +140,17 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         color: Colors.grey,
                       ),
                     ),
-                    child: _imageUrlController.text.isEmpty
-                        ? Text('Enter a URL')
-                        : FittedBox(
-                            child: Image.network(
-                              _imageUrlController.text,
+                    child: Container(
+                      child: _imageUrlController.text.isEmpty
+                          ? Text('Enter a URL')
+                          : FittedBox(
+                              alignment: Alignment.center,
+                              child: Image.network(
+                                _imageUrlController.text,
+                              ),
+                              fit: BoxFit.cover,
                             ),
-                            fit: BoxFit.cover,
-                          ),
+                    ),
                   ),
                   Expanded(
                     child: TextFormField(
@@ -105,6 +159,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       textInputAction: TextInputAction.done,
                       controller: _imageUrlController, // TextEditingController
                       focusNode: _imageUrlFocusNode,
+                      onFieldSubmitted: (value) {
+                        _saveForm();
+                      },
+                      onSaved: (value) {
+                        _editedProduct = Product(
+                          id: null,
+                          title: _editedProduct.title,
+                          price: _editedProduct.price,
+                          description: _editedProduct.description,
+                          imageUrl: value,
+                        );
+                      },
                     ),
                   ),
                 ],
