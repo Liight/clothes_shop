@@ -38,13 +38,11 @@ class Products with ChangeNotifier {
     ),
   ];
 
-
   List<Product> get favouriteItems {
     return _items.where((prodItem) => prodItem.isFavourite).toList();
   }
 
   List<Product> get items {
-
     return [..._items];
   }
 
@@ -52,9 +50,15 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-
-  void addProduct(Product newProduct) {
-    // _items.add(newProduct);
+  void addProduct(Product product) {
+    final newProduct = Product(
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      imageUrl: product.imageUrl,
+      id: DateTime.now().toString(),
+    );
+    _items.add(newProduct);
     notifyListeners();
   }
 }
