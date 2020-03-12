@@ -40,6 +40,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
   // Update the ImageUrl Image
   void _updateImageUrl() {
     if (!_imageUrlFocusNode.hasFocus) {
+      if ((!_imageUrlController.text.startsWith('http') &&
+              !_imageUrlController.text.startsWith('https')) ||
+          (!_imageUrlController.text.endsWith('.png') &&
+              !_imageUrlController.text.endsWith('.jpg') &&
+              !_imageUrlController.text.endsWith('.jpeg'))) {
+        return;
+      }
+
       // Rebuild the screen widget knowing that a state update has occured via a refocus
       setState(() {});
     }
