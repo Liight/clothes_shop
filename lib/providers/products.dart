@@ -54,27 +54,39 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  void addProduct(Product product) {
+  // ADD PRODUCT
+  // Return a future that resolves to void
+  Future<void> addProduct(Product product) {
     // Server (firebase)
     const url = 'https://clothing-store-68547.firebaseio.com/products.json';
-    http.post(url, body: json.encode({
-      'title': product.title,
-      'description': product.description,
-      'imageUrl': product.imageUrl,
-      'price': product.price,
-      'isFavourite': product.isFavourite,
-    }),);
-    // Local
-    final newProduct = Product(
-      title: product.title,
-      description: product.description,
-      price: product.price,
-      imageUrl: product.imageUrl,
-      id: DateTime.now().toString(),
-    );
-    _items.add(newProduct);
-    // Update Tree
-    notifyListeners();
+    // Returns future that will resolve when the 'then' block is done
+    return http
+        .post(
+      url,
+      body: json.encode({
+        'title': product.title,
+        'description': product.description,
+        'imageUrl': product.imageUrl,
+        'price': product.price,
+        'isFavourite': product.isFavourite,
+      }),
+    )
+        .then((response) {
+      // Local
+      final newProduct = Product(
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        id: json.decode(response.body)['name'], // Get Id From Server
+      );
+      _items.add(newProduct);
+      // Update Tree
+      notifyListeners();
+      // Handle Errors
+    }).catchError((error) {
+      print(error);
+    });
   }
 
   void updateProduct(String id, Product newProduct) {
