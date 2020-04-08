@@ -90,51 +90,51 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
-  void _saveForm() {
-    // Check validation, cancel save if the form is not valid
-    final isValid = _form.currentState.validate();
+  Future<void> _saveForm() async {
+    final isValid = _form.currentState
+        .validate(); // Check validation, cancel save if the form is not valid
     if (!isValid) {
       return;
     }
-    // Start loading indicator
+
     setState(() {
-      _isLoading = true;
+      _isLoading = true; // Start loading indicator
     });
-    // save form and update product list
-    _form.currentState.save();
+
+    _form.currentState.save(); // save form and update product list
     if (_editedProduct.id != null) {
       Provider.of<Products>(context, listen: false)
           .updateProduct(_editedProduct.id, _editedProduct);
       Navigator.of(context).pop();
     } else {
-      // Returned Future hence the 'then' block
-      Provider.of<Products>(context, listen: false).addProduct(_editedProduct)
-          // Show Error to User
-          .catchError((error) {
-            // Open dialogue box, hold future resolve until user presses ok
-        return showDialog(
-            context: context,
-            builder: (ctx) => AlertDialog(
-                  title: Text('An error occured'),
-                  content: Text(
-                    'Something went wrong',
-                  ),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text('OK'),
-                      onPressed: () {
-                        Navigator.of(ctx).pop(); // Close Dialoge Box
-                      },
-                    )
-                  ],
-                ));
-      }).then((_) {
-        // Stop loading indicator
+      try {
+        await Provider.of<Products>(context, listen: false)
+            .addProduct(_editedProduct);
+      } catch (error) {
+        // Returns a future as soon as the user presses 'OK' in the dialogue box
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('An error occured'),
+            content: Text(
+              'Something went wrong',
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(ctx).pop(); // Close Dialoge Box, return future
+                },
+              )
+            ],
+          ),
+        );
+      } finally {
         setState(() {
-          _isLoading = false;
+          _isLoading = false; // Stop loading indicator
         });
         Navigator.of(context).pop(); // Navigate after future resolves
-      });
+      }
     }
   }
 

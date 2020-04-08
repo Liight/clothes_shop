@@ -55,24 +55,25 @@ class Products with ChangeNotifier {
   }
 
   // ADD PRODUCT
-  // Return a future that resolves to void
-  Future<void> addProduct(Product product) {
+  // Return a future that resolves to void, 'async' wraps functions in futures
+  Future<void> addProduct(Product product) async {
     // Server (firebase)
     const url = 'https://clothing-store-68547.firebaseio.com/products.json';
-    // Returns future that will resolve when the 'then' block is done
-    return http
-        .post(
-      url,
-      body: json.encode({
-        'title': product.title,
-        'description': product.description,
-        'imageUrl': product.imageUrl,
-        'price': product.price,
-        'isFavourite': product.isFavourite,
-      }),
-    )
-        .then((response) {
-      // Local
+    // Start Error Handler
+    try {
+      // Invisible Future stored as variable
+      final response = await http.post(
+        url,
+        body: json.encode({
+          'title': product.title,
+          'description': product.description,
+          'imageUrl': product.imageUrl,
+          'price': product.price,
+          'isFavourite': product.isFavourite,
+        }),
+      );
+
+      // Local (invisible 'then' block) because of 'await'
       final newProduct = Product(
         title: product.title,
         description: product.description,
@@ -80,13 +81,15 @@ class Products with ChangeNotifier {
         imageUrl: product.imageUrl,
         id: json.decode(response.body)['name'], // Get Id From Server
       );
+      // Update Local items List
       _items.add(newProduct);
-      // Update Tree
+      // Update Widget Tree
       notifyListeners();
       // Handle Errors
-    }).catchError((error) {
+    } catch (error) {
       print(error);
-    });
+      throw(error);
+    }
   }
 
   void updateProduct(String id, Product newProduct) {
