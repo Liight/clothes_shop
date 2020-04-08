@@ -108,9 +108,27 @@ class _EditProductScreenState extends State<EditProductScreen> {
       Navigator.of(context).pop();
     } else {
       // Returned Future hence the 'then' block
-      Provider.of<Products>(context, listen: false)
-          .addProduct(_editedProduct)
-          .then((_) {
+      Provider.of<Products>(context, listen: false).addProduct(_editedProduct)
+          // Show Error to User
+          .catchError((error) {
+            // Open dialogue box, hold future resolve until user presses ok
+        return showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+                  title: Text('An error occured'),
+                  content: Text(
+                    'Something went wrong',
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(ctx).pop(); // Close Dialoge Box
+                      },
+                    )
+                  ],
+                ));
+      }).then((_) {
         // Stop loading indicator
         setState(() {
           _isLoading = false;
