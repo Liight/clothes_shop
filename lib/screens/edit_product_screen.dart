@@ -98,9 +98,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
     // save form and update product list
     _form.currentState.save();
     if (_editedProduct.id != null) {
+      
       Provider.of<Products>(context, listen: false)
           .updateProduct(_editedProduct.id, _editedProduct);
     } else {
+
       Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
     }
 
@@ -167,7 +169,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     return 'Please enter a price';
                   }
                   if (double.tryParse(value) == null) {
-                    return 'Please enter a vlid number';
+                    return 'Please enter a valid number';
                   }
                   if (double.parse(value) <= 0) {
                     return 'Please enter a number greater than zero';

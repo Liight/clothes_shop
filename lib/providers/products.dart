@@ -1,5 +1,9 @@
+// dart
+import 'dart:convert';
+// flutter
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as http;
+// custom
 import './product.dart';
 
 class Products with ChangeNotifier {
@@ -51,6 +55,16 @@ class Products with ChangeNotifier {
   }
 
   void addProduct(Product product) {
+    // Server (firebase)
+    const url = 'https://clothing-store-68547.firebaseio.com/products.json';
+    http.post(url, body: json.encode({
+      'title': product.title,
+      'description': product.description,
+      'imageUrl': product.imageUrl,
+      'price': product.price,
+      'isFavourite': product.isFavourite,
+    }),);
+    // Local
     final newProduct = Product(
       title: product.title,
       description: product.description,
@@ -59,6 +73,7 @@ class Products with ChangeNotifier {
       id: DateTime.now().toString(),
     );
     _items.add(newProduct);
+    // Update Tree
     notifyListeners();
   }
 
