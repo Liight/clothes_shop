@@ -77,7 +77,7 @@ class Products with ChangeNotifier {
       notifyListeners(); // Update app
       print(extractedData);
     } catch (error) {
-      throw(error);
+      throw (error);
       // print(error);
     }
   }
@@ -123,14 +123,16 @@ class Products with ChangeNotifier {
   Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
-      final url = 'https://clothing-store-68547.firebaseio.com/products/$id.json';
-      await http.patch(url, body: json.encode({
-        'title': newProduct.title,
-        'description': newProduct.description,
-        'price': newProduct.price,
-        'imageUrl': newProduct.imageUrl,
-        // 'isFavourite': newProduct.isFavourite, // Do not want to reset is Favourite status on server
-      }));
+      final url =
+          'https://clothing-store-68547.firebaseio.com/products/$id.json';
+      await http.patch(url,
+          body: json.encode({
+            'title': newProduct.title,
+            'description': newProduct.description,
+            'price': newProduct.price,
+            'imageUrl': newProduct.imageUrl,
+            // 'isFavourite': newProduct.isFavourite, // Do not want to reset is Favourite status on server
+          }));
       _items[prodIndex] = newProduct;
       notifyListeners();
     } else {
@@ -139,9 +141,22 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteProduct(String id) async {
-    final url = 'https://clothing-store-68547.firebaseio.com/products/$id.json';
-    await http.delete(url);
+  // Optimistic Updating: This ensures the product is re-added if the delete fails
+  void deleteProduct(String id) {
+    final url = 'https://clothing-store-68547.firebaseio.com/products/$id';
+    final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
+    var existingProduct = _items[existingProductIndex];
+    _items.removeAt(existingProductIndex);
+    // Delete will not throw an error when recieves error from server
+    http.delete(url).then((response) {
+      if(response.statusCode >= 400){
+        
+      }
+      existingProduct = null;
+    }).catchError((_) {
+      _items.insert(existingProductIndex, existingProduct); // Re-insert item if delete failed (rollback)
+      notifyListeners();
+    });
     _items.removeWhere((prod) => prod.id == id);
     notifyListeners();
   }
