@@ -10,6 +10,7 @@ import '../widgets/badge.dart';
 import '../widgets/app_drawer.dart';
 import '../providers/cart.dart';
 import './cart_screen.dart';
+import '../providers/products.dart';
 
 enum FilterOptions {
   Favourites,
@@ -25,7 +26,36 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   bool _showOnlyFavourites = false;
+  bool _isInit = true; // Only true in initialization
+  bool _isLoading = false;
+
   @override
+  void initState() {
+    // Provider.of<Products>(context).fetchAndSetProducts(); // Won't Work
+    // Future.delayed(Duration.zero).then((_){
+    //   Provider.of<Products>(context).fetchAndSetProducts();
+    // }); // Workaround, but registerted as a todo action, hackish
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      // Only runs when page first loads
+      setState(() {
+        _isLoading = true;
+      });
+
+      Provider.of<Products>(context).fetchAndSetProducts().then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+    _isInit = false; // Subsequent rerenders are not initial
+    super.didChangeDependencies();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -65,7 +95,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                 Icons.shopping_cart,
                 color: Colors.white,
               ),
-              onPressed: (){
+              onPressed: () {
                 Navigator.of(context).pushNamed(CartScreen.routeName);
               },
             ),
@@ -73,7 +103,9 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         ],
       ),
       drawer: AppDrawer(),
-      body: ProductsGrid(_showOnlyFavourites),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ProductsGrid(_showOnlyFavourites),
     );
   }
 }

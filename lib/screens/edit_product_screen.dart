@@ -103,7 +103,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
     _form.currentState.save(); // save form and update product list
     if (_editedProduct.id != null) {
-      Provider.of<Products>(context, listen: false)
+      await Provider.of<Products>(context, listen: false)
           .updateProduct(_editedProduct.id, _editedProduct);
       Navigator.of(context).pop();
     } else {
@@ -129,12 +129,17 @@ class _EditProductScreenState extends State<EditProductScreen> {
             ],
           ),
         );
-      } finally {
-        setState(() {
-          _isLoading = false; // Stop loading indicator
-        });
-        Navigator.of(context).pop(); // Navigate after future resolves
       }
+      // finally {
+      //   setState(() {
+      //     _isLoading = false; // Stop loading indicator
+      //   });
+      //   Navigator.of(context).pop(); // Navigate after future resolves
+      // }
+      setState(() {
+        _isLoading = false; // Stop loading indicator
+      });
+      Navigator.of(context).pop(); // Navigate after future resolves
     }
   }
 
