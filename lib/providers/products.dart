@@ -149,12 +149,11 @@ class Products with ChangeNotifier {
     _items.removeAt(existingProductIndex);
     // Delete will not throw an error when recieves error from server
     http.delete(url).then((response) {
-      if(response.statusCode >= 400){
-        
-      }
+      if (response.statusCode >= 400) {}
       existingProduct = null;
     }).catchError((_) {
-      _items.insert(existingProductIndex, existingProduct); // Re-insert item if delete failed (rollback)
+      _items.insert(existingProductIndex,
+          existingProduct); // Re-insert item if delete failed (rollback)
       notifyListeners();
     });
     _items.removeWhere((prod) => prod.id == id);
