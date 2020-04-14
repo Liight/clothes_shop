@@ -62,6 +62,10 @@ class Products with ChangeNotifier {
       print(response.body);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
+      // check for null and cancel operation of null
+      if (extractedData == null) {
+        return;
+      }
       // Build products from server data
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
@@ -85,8 +89,8 @@ class Products with ChangeNotifier {
   // ADD PRODUCT
   // Return a future that resolves to void, 'async' wraps functions in futures
   Future<void> addProduct(Product product) async {
-    
-    const url = 'https://clothing-store-68547.firebaseio.com/products.json'; // Server (firebase)
+    const url =
+        'https://clothing-store-68547.firebaseio.com/products.json'; // Server (firebase)
     // Start Error Handler
     try {
       // Invisible Future stored as variable
