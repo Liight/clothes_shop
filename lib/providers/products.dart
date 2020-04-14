@@ -85,8 +85,8 @@ class Products with ChangeNotifier {
   // ADD PRODUCT
   // Return a future that resolves to void, 'async' wraps functions in futures
   Future<void> addProduct(Product product) async {
-    // Server (firebase)
-    const url = 'https://clothing-store-68547.firebaseio.com/products.json';
+    
+    const url = 'https://clothing-store-68547.firebaseio.com/products.json'; // Server (firebase)
     // Start Error Handler
     try {
       // Invisible Future stored as variable
