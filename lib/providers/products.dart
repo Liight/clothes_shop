@@ -79,7 +79,7 @@ class Products with ChangeNotifier {
       });
       _items = loadedProducts; // Store products in items list
       notifyListeners(); // Update app
-      print(extractedData);
+      // print(extractedData);
     } catch (error) {
       throw (error);
       // print(error);
