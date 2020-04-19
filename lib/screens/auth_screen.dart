@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // Providers
 import '../providers/auth.dart';
+// Models
+import '../models/http_exception.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -108,6 +110,24 @@ class _AuthCardState extends State<AuthCard> {
   var _isLoading = false;
   final _passwordController = TextEditingController();
 
+  // SHOW ERROR DIALOGUE BOX WHEN AN ARROR OCCURS
+  void _showErrorDialogue(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('An Error Occured'),
+        content: Text(message),
+        actions: <Widget>[
+          FlatButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+              child: Text('Okay'))
+        ],
+      ),
+    );
+  }
+
   // SUBMIT
   Future<void> _submit() async {
     // Exit if invalid
@@ -120,16 +140,43 @@ class _AuthCardState extends State<AuthCard> {
     setState(() {
       _isLoading = true;
     });
-    // Run Login and Signup Methods
-    if (_authMode == AuthMode.Login) {
-      // Log user in
-    } else {
-      // Sign user up
-      // listen false: inside of auth screen is always unauthenticated and doesn're require an update to authentication state
-      await Provider.of<Auth>(context, listen: false).signup(
-        _authData['email'],
-        _authData['password'],
-      );
+    // Error Handling Check
+    try {
+      // Run Login and Signup Methods
+      if (_authMode == AuthMode.Login) {
+        // Log user in
+        await Provider.of<Auth>(context, listen: false).login(
+          _authData['email'],
+          _authData['password'],
+        );
+      } else {
+        // Sign user up
+        // listen false: inside of auth screen is always unauthenticated and doesn're require an update to authentication state
+        await Provider.of<Auth>(context, listen: false).signup(
+          _authData['email'],
+          _authData['password'],
+        );
+      }
+    } on HttpException catch (error) {
+      // catch errors of type HttpException
+      var errorMessage = 'Authentication Failed';
+      if (error.toString().contains('EMAIL_EXISTS')) {
+        errorMessage = 'This email address is already in use.';
+      } else if (error.toString().contains('INVALID_EMAIL')) {
+        errorMessage = 'This is not a valid email address';
+      } else if (error.toString().contains('WEAK_PASSWORD')) {
+        errorMessage = 'This password is too weak';
+      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+        errorMessage = 'Could not find a user with that email.';
+      } else if (error.toString().contains('INVALID_PASSWORD')) {
+        errorMessage = 'Invalid Password.';
+      }
+      _showErrorDialogue(errorMessage);
+    } catch (error) {
+      // catch general errors
+      const errorMessage =
+          'Could not authenticate you. Please try again later.';
+      _showErrorDialogue(errorMessage);
     }
     // Unset Loading Spinner
     setState(() {
@@ -179,7 +226,7 @@ class _AuthCardState extends State<AuthCard> {
                     }
                   },
                   onSaved: (value) {
-                    _authData['email'] = value;
+                    _authData['email'] = value.toString().trim();
                   },
                 ),
                 TextFormField(
@@ -192,7 +239,7 @@ class _AuthCardState extends State<AuthCard> {
                     }
                   },
                   onSaved: (value) {
-                    _authData['password'] = value;
+                    _authData['password'] = value.toString().trim();
                   },
                 ),
                 if (_authMode == AuthMode.Signup)
