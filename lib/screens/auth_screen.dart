@@ -1,6 +1,10 @@
+// Dart
 import 'dart:math';
-
+// Flutter
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+// Providers
+import '../providers/auth.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -42,10 +46,10 @@ class AuthScreen extends StatelessWidget {
                       margin: EdgeInsets.only(bottom: 20.0),
                       padding:
                           EdgeInsets.symmetric(vertical: 8.0, horizontal: 94.0),
-                          // Transforms how the container is presented
+                      // Transforms how the container is presented
                       transform: Matrix4.rotationZ(-8 * pi / 180)
                         ..translate(-10.0),
-                      // ..translate(-10.0), 
+                      // ..translate(-10.0),
                       // .. is a special operator that will call the function on the object
                       // but will also return the object itself and not the method
                       // called cascading
@@ -105,7 +109,7 @@ class _AuthCardState extends State<AuthCard> {
   final _passwordController = TextEditingController();
 
   // SUBMIT
-  void _submit() {
+  Future<void> _submit() async {
     // Exit if invalid
     if (!_formKey.currentState.validate()) {
       // Invalid!
@@ -121,6 +125,11 @@ class _AuthCardState extends State<AuthCard> {
       // Log user in
     } else {
       // Sign user up
+      // listen false: inside of auth screen is always unauthenticated and doesn're require an update to authentication state
+      await Provider.of<Auth>(context, listen: false).signup(
+        _authData['email'],
+        _authData['password'],
+      );
     }
     // Unset Loading Spinner
     setState(() {
