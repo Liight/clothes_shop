@@ -157,6 +157,9 @@ class _AuthCardState extends State<AuthCard> {
           _authData['password'],
         );
       }
+      // Navigate to the Products Overview Page after Login
+      Navigator.of(context).pushReplacementNamed('/products-overview');
+      //Handle Errors
     } on HttpException catch (error) {
       // catch errors of type HttpException
       var errorMessage = 'Authentication Failed';

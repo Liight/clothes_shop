@@ -11,6 +11,21 @@ class Auth with ChangeNotifier {
   DateTime _expiryDate;
   String _userId;
 
+  bool get isAuth {
+    // If we have a token and the token didn't expire, then the user is authenticated
+    return token != null;
+  }
+
+  String get token {
+    // Token Authentication
+    if (_expiryDate != null &&
+        _expiryDate.isAfter(DateTime.now()) &&
+        _token != null) {
+      return _token;
+    }
+    return null;
+  }
+
   // AUTHENTICATION
   Future<void> _authenticate(
       String email, String password, String urlSegment) async {
@@ -21,7 +36,6 @@ class Auth with ChangeNotifier {
     try {
       final response = await http.post(
         url,
-
         body: jsonEncode(
           {
             "email": email,
@@ -32,12 +46,21 @@ class Auth with ChangeNotifier {
       );
       final responseData = json.decode(response.body);
       // Check responseData for and error key
-      if(responseData['error'] != null){
-        throw(HttpException(responseData['error']['message']));
+      if (responseData['error'] != null) {
+        throw HttpException(responseData['error']['message']);
       }
+
+      _token = responseData['idToken']; // Set Token
+      _userId = responseData['localId']; // Set Local Id
+      _expiryDate = DateTime.now().add(
+        Duration(
+          seconds: int.parse(responseData['expiresIn']), // Parse String Value in Response Key to int
+        ),
+      );
+      notifyListeners(); // Update UI
     } catch (error) {
       // Will catch if response contains error status
-      throw(error); 
+      throw (error);
     }
   }
 

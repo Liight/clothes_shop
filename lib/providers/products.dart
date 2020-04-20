@@ -46,6 +46,10 @@ class Products with ChangeNotifier {
     return _items.where((prodItem) => prodItem.isFavourite).toList();
   }
 
+  // Get token from the Auth Class for use in this provider
+  final String authToken;
+  Products(this.authToken, this._items);
+
   List<Product> get items {
     return [..._items];
   }
@@ -56,7 +60,7 @@ class Products with ChangeNotifier {
 
   // FETCH PRODUCT
   Future<void> fetchAndSetProducts() async {
-    const url = 'https://clothing-store-68547.firebaseio.com/products.json';
+    final url = 'https://clothing-store-68547.firebaseio.com/products.json?auth=$authToken';
     try {
       final response = await http.get(url); // Get this first
       print(response.body);
