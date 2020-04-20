@@ -179,7 +179,7 @@ class _AuthCardState extends State<AuthCard> {
       // catch general errors
       const errorMessage =
           'Could not authenticate you. Please try again later.';
-      _showErrorDialogue(errorMessage);
+      _showErrorDialogue(errorMessage + "\n" + error.toString());
     }
     // Unset Loading Spinner
     setState(() {
