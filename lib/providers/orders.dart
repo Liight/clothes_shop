@@ -20,13 +20,17 @@ class OrderItem {
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
 
+  final String authToken;
+
+  Orders(this.authToken, this._orders);
+
   List<OrderItem> get orders {
     return [..._orders];
   }
 
   Future<void> fetchAndSetOrders() async {
-    const url =
-        'https://clothing-store-68547.firebaseio.com/orders.json'; // Server (firebase)
+    final url =
+        'https://clothing-store-68547.firebaseio.com/orders.json?auth=$authToken'; // Server (firebase)
     final response = await http.get(url);
     final List<OrderItem> loadedOrders = [];
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -59,8 +63,8 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
-    const url =
-        'https://clothing-store-68547.firebaseio.com/orders.json'; // Server (firebase)
+    final url =
+        'https://clothing-store-68547.firebaseio.com/orders.json?auth=$authToken'; // Server (firebase)
     final timestamp = DateTime.now(); // Store current date and time
     final response = await http.post(
       url,

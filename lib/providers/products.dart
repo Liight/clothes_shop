@@ -93,8 +93,8 @@ class Products with ChangeNotifier {
   // ADD PRODUCT
   // Return a future that resolves to void, 'async' wraps functions in futures
   Future<void> addProduct(Product product) async {
-    const url =
-        'https://clothing-store-68547.firebaseio.com/products.json'; // Server (firebase)
+    final url =
+        'https://clothing-store-68547.firebaseio.com/products.json?auth=$authToken'; // Server (firebase)
     // Start Error Handler
     try {
       // Invisible Future stored as variable
@@ -132,7 +132,7 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
       final url =
-          'https://clothing-store-68547.firebaseio.com/products/$id.json';
+          'https://clothing-store-68547.firebaseio.com/products/$id.json?auth=?$authToken';
       await http.patch(url,
           body: json.encode({
             'title': newProduct.title,
@@ -151,7 +151,7 @@ class Products with ChangeNotifier {
 
   // Optimistic Updating: This ensures the product is re-added if the delete fails
   void deleteProduct(String id) {
-    final url = 'https://clothing-store-68547.firebaseio.com/products/$id';
+    final url = 'https://clothing-store-68547.firebaseio.com/products/$id.json?auth=?auth=$authToken';
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     var existingProduct = _items[existingProductIndex];
     _items.removeAt(existingProductIndex);

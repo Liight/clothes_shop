@@ -32,14 +32,20 @@ class MyApp extends StatelessWidget {
             Provider.of<Auth>(ctx, listen: false).token,
             [],
           ),
-          update: (ctx, auth, previousProducts) => Products(
-              auth.token, previousProducts == null ? [] : previousProducts.items),
+          update: (ctx, auth, previousProducts) => Products(auth.token,
+              previousProducts == null ? [] : previousProducts.items),
         ),
         ChangeNotifierProvider.value(
           value: Cart(),
         ),
-        ChangeNotifierProvider.value(
-          value: Orders(),
+        ChangeNotifierProxyProvider<Auth, Orders>(
+          // ChangeNotifierProxyProvider creates a Provider with a dependancy on another previously declared Provider
+          create: (ctx) => Orders(
+            Provider.of<Auth>(ctx, listen: false).token,
+            [],
+          ),
+          update: (ctx, auth, previousOrders) => Orders(
+              auth.token, previousOrders == null ? [] : previousOrders.orders),
         ),
       ],
       child: Consumer<Auth>(
