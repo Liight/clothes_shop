@@ -48,7 +48,9 @@ class Products with ChangeNotifier {
 
   // Get token from the Auth Class for use in this provider
   final String authToken;
-  Products(this.authToken, this._items);
+  final String userId;
+
+  Products(this.authToken, this.userId, this._items );
 
   List<Product> get items {
     return [..._items];
@@ -60,7 +62,8 @@ class Products with ChangeNotifier {
 
   // FETCH PRODUCT
   Future<void> fetchAndSetProducts() async {
-    final url = 'https://clothing-store-68547.firebaseio.com/products.json?auth=$authToken';
+    // Get all products
+    var url = 'https://clothing-store-68547.firebaseio.com/products.json?auth=$authToken';
     try {
       final response = await http.get(url); // Get this first
       print(response.body);
@@ -70,14 +73,20 @@ class Products with ChangeNotifier {
       if (extractedData == null) {
         return;
       }
-      // Build products from server data
+      // Get favourite data for all products user has marked as favourite
+      url =  'https://clothing-store-68547.firebaseio.com/userFavourites/$userId.json?auth=$authToken';
+      final favouriteResponse = await http.get(url);
+      final favouriteData = json.decode(favouriteResponse.body);
+      // Build products locally from server data
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
           id: prodId,
           title: prodData['title'],
           description: prodData['description'],
           price: prodData['price'],
-          isFavourite: prodData['isFavourite'],
+          // favouriteData should be an product id with a boolean value
+          isFavourite: favouriteData == null ? false : favouriteData[prodId] ?? false, 
+          // ?? checks for null and reverts to a fallback option with :
           imageUrl: prodData['imageUrl'],
         ));
       });
@@ -105,7 +114,8 @@ class Products with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
-          'isFavourite': product.isFavourite,
+          'creatorId': userId,
+          // 'isFavourite': product.isFavourite,
         }),
       );
 

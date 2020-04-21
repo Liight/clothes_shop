@@ -30,10 +30,14 @@ class MyApp extends StatelessWidget {
           // ChangeNotifierProxyProvider creates a Provider with a dependancy on another previously declared Provider
           create: (ctx) => Products(
             Provider.of<Auth>(ctx, listen: false).token,
+            Provider.of<Auth>(ctx, listen: false).userId,
             [],
           ),
-          update: (ctx, auth, previousProducts) => Products(auth.token,
-              previousProducts == null ? [] : previousProducts.items),
+          update: (ctx, auth, previousProducts) => Products(
+            auth.token,
+            auth.userId,
+            previousProducts == null ? [] : previousProducts.items,
+          ),
         ),
         ChangeNotifierProvider.value(
           value: Cart(),

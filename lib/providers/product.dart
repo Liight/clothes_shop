@@ -28,18 +28,16 @@ class Product with ChangeNotifier {
 
   // Update the users isFavourite status on a selected item
   // Optimistic Updating with a Future
-  Future<void> toggleFavouriteStatus(String token) async {
+  Future<void> toggleFavouriteStatus(String token, String userId) async {
     final oldStatus = isFavourite; // store data before change
     isFavourite = !isFavourite; // transform data
     notifyListeners(); // update app state and trigger renders
     final url =
-        'https://clothing-store-68547.firebaseio.com/products/$id.json?auth=$token'; // id required
+        'https://clothing-store-68547.firebaseio.com/userFavourites/$userId/$id.json?auth=$token'; // id required
     try {
-      final response = await http.patch(
+      final response = await http.put(
         url,
-        body: json.encode({
-          'isFavourite': isFavourite, // store transformed data
-        }),
+        body: json.encode(isFavourite), // store transformed data
       );
       if (response.statusCode >= 400) {
         _setFavValue(
