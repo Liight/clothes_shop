@@ -47,9 +47,10 @@ class MyApp extends StatelessWidget {
           create: (ctx) => Orders(
             Provider.of<Auth>(ctx, listen: false).token,
             [],
+            Provider.of<Auth>(ctx, listen: false).userId,
           ),
-          update: (ctx, auth, previousOrders) => Orders(
-              auth.token, previousOrders == null ? [] : previousOrders.orders),
+          update: (ctx, auth, previousOrders) => Orders(auth.token,
+              previousOrders == null ? [] : previousOrders.orders, auth.userId),
         ),
       ],
       child: Consumer<Auth>(
