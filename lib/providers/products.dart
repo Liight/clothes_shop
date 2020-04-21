@@ -61,9 +61,11 @@ class Products with ChangeNotifier {
   }
 
   // FETCH PRODUCT
-  Future<void> fetchAndSetProducts() async {
-    // Get all products
-    var url = 'https://clothing-store-68547.firebaseio.com/products.json?auth=$authToken';
+  // [] brackers around an argument make it optional, always provide a default value
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    // Get all products, filtered by creator id where creator id is equal to the user id, set by filterByUser
+    final filterString = filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
+    var url = 'https://clothing-store-68547.firebaseio.com/products.json?auth=$authToken&$filterString';
     try {
       final response = await http.get(url); // Get this first
       print(response.body);
